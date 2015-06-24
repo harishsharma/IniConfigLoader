@@ -3,6 +3,8 @@ package org.harish.config;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.harish.config.util.LRUCache;
+
 /**
  * {@link Config} provides a way to query value for a given key.
  * 
@@ -11,10 +13,12 @@ import java.util.Map;
  */
 public class Config {
 
-    private final Map<String, Group> keyToGroupMap;
+    private final Map<String, Group>       keyToGroupMap;
+    private final LRUCache<String, Object> cache;
 
     public Config() {
         this.keyToGroupMap = new LinkedHashMap<>();
+        this.cache = new LRUCache<>(Constants.CACHE_CAPACITY);
     }
 
     /**
@@ -24,7 +28,7 @@ public class Config {
      * @return
      */
     public Long getConfigAsLong(String key) {
-        Object res = getConfig(key);
+        Object res = getOrSetInCache(key);
         if (res == null) return null;
         try {
             Long result = Long.parseLong((String) res);
@@ -44,7 +48,7 @@ public class Config {
      * @return
      */
     public Integer getConfigAsInt(String key) {
-        Object res = getConfig(key);
+        Object res = getOrSetInCache(key);
         if (res == null) return null;
         try {
             Integer result = Integer.parseInt((String) res);
@@ -61,7 +65,7 @@ public class Config {
      * @return
      */
     public Double getConfigAsDouble(String key) {
-        Object res = getConfig(key);
+        Object res = getOrSetInCache(key);
         if (res == null) return null;
         try {
             Double result = Double.parseDouble((String) res);
@@ -78,7 +82,7 @@ public class Config {
      * @return
      */
     public String getConfigAsString(String key) {
-        Object res = getConfig(key);
+        Object res = getOrSetInCache(key);
         if (res == null) return null;
         try {
             return (String) res;
@@ -94,7 +98,7 @@ public class Config {
      * @return
      */
     public Boolean getConfigAsBoolean(String key) {
-        Object res = getConfig(key);
+        Object res = getOrSetInCache(key);
         if (res == null) return null;
         try {
             String result = (String) res;
@@ -110,15 +114,27 @@ public class Config {
     }
 
     public Object getConfig(String key) {
-        String[] keys = key.split("\\.");
-        if (keys.length > 2) return null;
-        if (keys.length == 1) {
-            return keyToGroupMap.get(keys[0]);
+        try {
+            if (cache.containsKey(key)) {
+                return cache.get(key);
+            }
+            String[] keys = key.split("\\.");
+            if (keys.length > 2) return null;
+            if (keys.length == 1) {
+                Object response = keyToGroupMap.get(keys[0]);
+                cache.put(key, response);
+                return response;
+            }
+            String groupKey = keys[0];
+            String actualKey = keys[1];
+            Group group = keyToGroupMap.get(groupKey);
+            Object response = group.getValueForKey(actualKey);
+            cache.put(actualKey, response);
+            return response;
+        } catch (Exception e) {
+            // As this API should never throw exception as per the requirement so catch and log it and return null.
+            return null;
         }
-        String groupKey = keys[0];
-        String actualKey = keys[1];
-        Group group = keyToGroupMap.get(groupKey);
-        return group.getValueForKey(actualKey);
     }
 
     @Override
@@ -142,5 +158,16 @@ public class Config {
     void addGroup(final Group group) {
         if (group == null) throw new IllegalArgumentException("Null group is not allowed");
         keyToGroupMap.put(group.getGroupName(), group);
+    }
+
+    private Object getOrSetInCache(final String key) {
+        Object res = null;
+        if (cache.containsKey(key)) {
+            res = cache.get(key);
+        } else {
+            res = getConfig(key);
+            cache.put(key, res);
+        }
+        return res;
     }
 }

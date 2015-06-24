@@ -13,4 +13,5 @@ public class Constants {
     public static final char   OVERRIDE_END    = '>';
     public static final char   STRING_LITERAL  = '"';
     public static final String ARRAY_SEPARATOR = ",";
+    public static final int    CACHE_CAPACITY  = 20;
 }
