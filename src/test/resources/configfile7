@@ -1,0 +1,7 @@
+[common]
+
+basic_size_limit = 26214400
+
+student_size_limit = 52428800
+
+paid_users_size_limit = "some thing ; should fail as closing tag (") is missing

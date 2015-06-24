@@ -138,4 +138,24 @@ public class ConfigLoaderTest {
     public void failLoadKVSeparatorMissing() throws LoadException {
         classUnderTest.loadConfig("src/test/resources/configfile4");
     }
+
+    @Test(expected = LoadException.class)
+    public void failLoadOverRideMissing() throws LoadException {
+        classUnderTest.loadConfig("src/test/resources/configfile5");
+    }
+
+    @Test(expected = LoadException.class)
+    public void failLoadKeyMissing() throws LoadException {
+        classUnderTest.loadConfig("src/test/resources/configfile6");
+    }
+
+    @Test(expected = LoadException.class)
+    public void failLoadBadValue() throws LoadException {
+        classUnderTest.loadConfig("src/test/resources/configfile7");
+    }
+    
+    @Test(expected = LoadException.class)
+    public void failLoadBadFile() throws LoadException {
+        classUnderTest.loadConfig("src/test/resources/configfile8");
+    }
 }
