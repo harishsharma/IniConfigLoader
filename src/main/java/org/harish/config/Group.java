@@ -6,6 +6,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+/**
+ * Abstraction for representing group information in config file.
+ * 
+ * @author harish.sharma
+ *
+ */
 public class Group {
     public static final String        EMPTY_OVERRIDE = "";
     private final String              name;

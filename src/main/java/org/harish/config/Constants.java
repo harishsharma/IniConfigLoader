@@ -1,9 +1,7 @@
 package org.harish.config;
 
 /**
- * 
  * @author harish.sharma
- *
  */
 public class Constants {
 

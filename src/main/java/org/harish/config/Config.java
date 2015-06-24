@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
+ * {@link Config} provides a way to query value for a given key.
  * 
  * @author harish.sharma
  *

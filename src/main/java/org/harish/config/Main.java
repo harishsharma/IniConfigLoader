@@ -1,6 +1,8 @@
 package org.harish.config;
 
-
+/**
+ * @author harish.sharma
+ */
 public class Main {
     public static void main(String[] args) throws LoadException {
         ConfigLoader loader = new DefaultConfigLoader();

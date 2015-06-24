@@ -7,12 +7,21 @@ import java.util.List;
 import org.harish.config.util.Triplet;
 
 /**
+ * {@link Parser} contains the core logic of interpreting the config file.
  * 
  * @author harish.sharma
  *
  */
 public class Parser {
 
+    /**
+     * Create config for given source reader and overrides.
+     * 
+     * @param reader
+     * @param overrides
+     * @return
+     * @throws LoadException
+     */
     public static Config createConfig(final BufferedReader reader, String[] overrides) throws LoadException {
         try {
             Config config = new Config();
@@ -48,6 +57,9 @@ public class Parser {
     }
 
 
+    /*
+     * Parse the key value line as per the rules of Config Parsing.
+     */
     private static Triplet<String, String, ? extends Object> handleKeyValue(final String line) throws LoadException {
         int idx = line.indexOf(Constants.KV_SEPARATOR);
         if (idx <= 0) throw new LoadException("Illegal KeyValue present : " + line);
